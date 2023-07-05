@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.exception.BookingNotFoundException;
-import ru.practicum.shareit.booking.exception.BookingValidationException;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -118,7 +116,7 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(CommentMapper::toDto)
                 .collect(Collectors.toList());
-            itemDto.setComments(commentsDto);
+        itemDto.setComments(commentsDto);
 
         return itemDto;
     }
@@ -190,7 +188,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Вещь с id %d не найдена", itemId)));
         Booking booking = bookingRepository.findFirstBookingByItemAndBookerAndStatusAndEndBefore(item, user,
-                BookingStatus.APPROVED, LocalDateTime.now(), byStartDESC)
+                        BookingStatus.APPROVED, LocalDateTime.now(), byStartDESC)
                 .orElseThrow(() -> new ItemValidationException(String.format("Вещь с id %d нельзя комментировать до окончания аренды", itemId)));
 
         Comment comment = CommentMapper.toCommment(commentDto);
