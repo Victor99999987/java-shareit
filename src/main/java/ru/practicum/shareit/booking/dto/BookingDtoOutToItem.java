@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingDtoOutToItem {
     private Long id;
     private LocalDateTime start;

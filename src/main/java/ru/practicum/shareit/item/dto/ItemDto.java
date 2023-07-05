@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ItemDto {
     private Long id;
     @NotBlank(message = "Название не должно быть пустым")
