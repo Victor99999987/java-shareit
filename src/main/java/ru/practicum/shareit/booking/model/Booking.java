@@ -20,7 +20,6 @@ public class Booking {
     @Column(name = "id")
     private Long id;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     private Item item;
@@ -31,7 +30,6 @@ public class Booking {
     @Column(name = "end_date", nullable = false)
     private LocalDateTime end;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "booker_id")
     private User booker;

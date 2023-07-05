@@ -40,7 +40,8 @@ public class ItemServiceImpl implements ItemService {
     private final Sort byId = Sort.by(Sort.Direction.ASC, "id");
     private final Sort byCreatedASC = Sort.by(Sort.Direction.ASC, "created");
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository,
+                           BookingRepository bookingRepository, CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
@@ -189,7 +190,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Вещь с id %d не найдена", itemId)));
         Booking booking = bookingRepository.findFirstBookingByItemAndBookerAndStatusAndEndBefore(item, user,
                         BookingStatus.APPROVED, LocalDateTime.now(), byStartDESC)
-                .orElseThrow(() -> new ItemValidationException(String.format("Вещь с id %d нельзя комментировать до окончания аренды", itemId)));
+                .orElseThrow(() -> new ItemValidationException("Вещь с id %d нельзя комментировать до окончания аренды"));
 
         Comment comment = CommentMapper.toCommment(commentDto);
         comment.setAuthor(user);

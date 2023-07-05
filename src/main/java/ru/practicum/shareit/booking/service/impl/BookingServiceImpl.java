@@ -36,7 +36,8 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
     private final Sort byStartDESC = Sort.by(Sort.Direction.DESC, "start");
 
-    public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository, ItemRepository itemRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository,
+                              ItemRepository itemRepository) {
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
         this.itemRepository = itemRepository;
@@ -79,7 +80,6 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BookingNotFoundException(String.format("Бронирование с id %d не найдено", id)));
 
         if (!Objects.equals(booking.getItem().getOwner().getId(), userId)) {
-            //throw new BookingValidationException("Подтверждать или отклонять бронирование может только владелец вещи");
             throw new BookingNotFoundException("Подтверждать или отклонять бронирование может только владелец вещи");
         }
 
@@ -106,7 +106,6 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BookingNotFoundException(String.format("Бронирование с id %d не найдено", id)));
 
         if (!booking.getBooker().getId().equals(userId) && !booking.getItem().getOwner().getId().equals(userId)) {
-            //throw new BookingValidationException("Просмотреть информацию о бронировании может только автор или владелец вещи");
             throw new BookingNotFoundException("Просмотреть информацию о бронировании может только автор или владелец вещи");
         }
 

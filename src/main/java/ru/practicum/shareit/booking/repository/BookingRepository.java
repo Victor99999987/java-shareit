@@ -24,7 +24,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByItem_Owner(User owner, Sort sort);
 
-    List<Booking> findAllByItem_OwnerAndStartBeforeAndEndAfter(User owner, LocalDateTime start, LocalDateTime end, Sort sort);
+    List<Booking> findAllByItem_OwnerAndStartBeforeAndEndAfter(User owner, LocalDateTime start, LocalDateTime end,
+                                                               Sort sort);
 
     List<Booking> findAllByItem_OwnerAndEndBefore(User owner, LocalDateTime end, Sort sort);
 
@@ -32,13 +33,18 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByItem_OwnerAndStatus(User owner, BookingStatus status, Sort sort);
 
-    Booking findFirstBookingByItemAndStartBeforeAndStatus(Item item, LocalDateTime start, BookingStatus status, Sort sort);
+    Booking findFirstBookingByItemAndStartBeforeAndStatus(Item item, LocalDateTime start, BookingStatus status,
+                                                          Sort sort);
 
-    Booking findFirstBookingByItemAndStartAfterAndStatus(Item item, LocalDateTime start, BookingStatus status, Sort sort);
+    Booking findFirstBookingByItemAndStartAfterAndStatus(Item item, LocalDateTime start, BookingStatus status,
+                                                         Sort sort);
 
-    List<Booking> findAllByItemInAndStartBeforeAndStatus(List<Item> items, LocalDateTime start, BookingStatus status, Sort sort);
+    List<Booking> findAllByItemInAndStartBeforeAndStatus(List<Item> items, LocalDateTime start, BookingStatus status,
+                                                         Sort sort);
 
-    List<Booking> findAllByItemInAndStartAfterAndStatus(List<Item> items, LocalDateTime start, BookingStatus status, Sort sort);
+    List<Booking> findAllByItemInAndStartAfterAndStatus(List<Item> items, LocalDateTime start, BookingStatus status,
+                                                        Sort sort);
 
-    Optional<Booking> findFirstBookingByItemAndBookerAndStatusAndEndBefore(Item item, User booker, BookingStatus status, LocalDateTime end, Sort sort);
+    Optional<Booking> findFirstBookingByItemAndBookerAndStatusAndEndBefore(Item item, User booker, BookingStatus status,
+                                                                           LocalDateTime end, Sort sort);
 }

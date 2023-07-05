@@ -67,10 +67,6 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
-//        String message = "";
-//        for (ObjectError err : e.getAllErrors()) {
-//            message = message + err.getDefaultMessage() + "; ";
-//        }
         List<String> erMessages = e.getAllErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -85,14 +81,12 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    //это бросает метод save репозитория, когда
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleOptimisticLockingFailureException(final OptimisticLockingFailureException e) {
         return new ErrorResponse(e.getMessage());
     }
 
-    //это бросает метод findById репозитория, когда ему заместо id толкают null
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIllegalArgumentException(final IllegalArgumentException e) {
