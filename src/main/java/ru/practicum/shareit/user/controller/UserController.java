@@ -20,13 +20,13 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> getAll() {
-        return userService.getAll();
+    public List<UserDto> findAll() {
+        return userService.findAll();
     }
 
     @GetMapping("/{id}")
-    public UserDto getById(@PathVariable Long id) {
-        return userService.getById(id);
+    public UserDto findById(@PathVariable Long id) {
+        return userService.findById(id);
     }
 
     @PostMapping
@@ -35,8 +35,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public UserDto remove(@PathVariable Long id) {
-        return userService.remove(id);
+    public void remove(@PathVariable Long id) {
+        userService.remove(id);
     }
 
     @PatchMapping("/{id}")
