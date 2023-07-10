@@ -21,8 +21,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.exception.RequestNotFoundException;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
@@ -149,7 +149,7 @@ public class ItemServiceImpl implements ItemService {
         Long requestId = itemDto.getRequestId();
         if (requestId != null) {
             Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new RequestNotFoundException(String.format("Запрос с id %d не найден", requestId)));
+                    .orElseThrow(() -> new RequestNotFoundException(String.format("Запрос с id %d не найден", requestId)));
             item.setRequest(request);
         }
 
