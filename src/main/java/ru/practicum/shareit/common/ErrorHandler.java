@@ -12,6 +12,8 @@ import ru.practicum.shareit.booking.exception.BookingNotFoundException;
 import ru.practicum.shareit.booking.exception.BookingValidationException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemValidationException;
+import ru.practicum.shareit.request.exception.RequestNotFoundException;
+import ru.practicum.shareit.request.exception.RequestValidationException;
 import ru.practicum.shareit.user.exception.UserAlreadyExistException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
@@ -21,6 +23,18 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ErrorHandler {
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleRequestValidationException(final RequestValidationException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleRequestNotFoundException(final RequestNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)

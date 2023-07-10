@@ -19,11 +19,12 @@ public class ItemDto {
     @Size(min = 1, max = 200, message = "Название должно быть до 200 символов")
     private String name;
     @NotBlank(message = "Описание не должно быть пустым")
-    @Size(min = 1, max = 1000, message = "Описание должно быть до 200 символов")
+    @Size(min = 1, max = 1000, message = "Описание должно быть до 1000 символов")
     private String description;
     @NotNull(message = "Статус доступности должен быть указан")
     private Boolean available;
     private BookingDtoOutToItem lastBooking;
     private BookingDtoOutToItem nextBooking;
     private List<CommentDto> comments;
+    private Long requestId;
 }

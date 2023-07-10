@@ -7,11 +7,14 @@ import ru.practicum.shareit.item.model.Item;
 @UtilityClass
 public class ItemMapper {
     public static ItemDto toDto(Item item) {
+        Long requestId = item.getRequest() != null ? item.getRequest().getId() : null;
+
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId(requestId)
                 .build();
     }
 

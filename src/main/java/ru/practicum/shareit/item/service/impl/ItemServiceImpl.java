@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,9 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.request.model.Request;
+import ru.practicum.shareit.request.exception.RequestNotFoundException;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -35,25 +40,36 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
     private final Sort byStartDESC = Sort.by(Sort.Direction.DESC, "start");
     private final Sort byStartASC = Sort.by(Sort.Direction.ASC, "start");
     private final Sort byId = Sort.by(Sort.Direction.ASC, "id");
     private final Sort byCreatedASC = Sort.by(Sort.Direction.ASC, "created");
 
     public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository,
-                           BookingRepository bookingRepository, CommentRepository commentRepository) {
+                           BookingRepository bookingRepository, CommentRepository commentRepository, RequestRepository requestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.requestRepository = requestRepository;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> findAllByUserId(Long userId) {
+    public List<ItemDto> findAllByUserId(Long userId, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с id %d не найден", userId)));
-        List<Item> items = itemRepository.findAllByOwner(user, byId);
+
+        if (from < 0) {
+            throw new ItemValidationException("Минимальное значение записи, с которой можно получить данные равно 0");
+        }
+        if (size <= 0) {
+            throw new ItemValidationException("Количество записей на странице должно быть больше 0");
+        }
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size, byId);
+
+        List<Item> items = itemRepository.findAllByOwner(user, pageable);
         List<ItemDto> itemsDto = items
                 .stream()
                 .map(ItemMapper::toDto)
@@ -129,6 +145,14 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с id %d не найден", userId)));
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(user);
+
+        Long requestId = itemDto.getRequestId();
+        if (requestId != null) {
+            Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RequestNotFoundException(String.format("Запрос с id %d не найден", requestId)));
+            item.setRequest(request);
+        }
+
         return ItemMapper.toDto(itemRepository.save(item));
     }
 
@@ -170,12 +194,21 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, int from, int size) {
         if (text.isEmpty()) {
             return List.of();
         }
+
+        if (from < 0) {
+            throw new ItemValidationException("Минимальное значение записи, с которой можно получить данные равно 0");
+        }
+        if (size <= 0) {
+            throw new ItemValidationException("Количество записей на странице должно быть больше 0");
+        }
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size, byId);
+
         return itemRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailable(text,
-                        text, true)
+                        text, true, pageable)
                 .stream()
                 .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
