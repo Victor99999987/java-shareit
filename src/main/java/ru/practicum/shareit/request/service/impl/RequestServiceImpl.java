@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -41,6 +42,7 @@ public class RequestServiceImpl implements RequestService {
         this.itemRepository = itemRepository;
     }
 
+    @Transactional
     @Override
     public RequestDto add(Long userId, RequestDto requestDto) {
         User user = userRepository.findById(userId)
@@ -51,6 +53,7 @@ public class RequestServiceImpl implements RequestService {
         return RequestMapper.toDto(requestRepository.save(request));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<RequestDto> findAllByUserId(Long userId) {
         User user = userRepository.findById(userId)
@@ -79,6 +82,8 @@ public class RequestServiceImpl implements RequestService {
         return requestDtos;
     }
 
+    @Transactional(readOnly = true)
+    @Override
     public List<RequestDto> findAll(Long userId, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с id %d не найден", userId)));
@@ -112,6 +117,7 @@ public class RequestServiceImpl implements RequestService {
         return requestDtos;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public RequestDto findById(Long userId, Long id) {
         User user = userRepository.findById(userId)
