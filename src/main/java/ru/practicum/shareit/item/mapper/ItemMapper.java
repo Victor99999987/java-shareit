@@ -20,17 +20,11 @@ public class ItemMapper {
     }
 
     public static Item toItem(ItemDto itemDto) {
-        Long requestId = itemDto.getRequestId() != null ? itemDto.getRequestId() : null;
-        Request request = Request.builder()
-                .id(requestId)
-                .build();
-
         return Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
-                .request(request)
                 .build();
     }
 }

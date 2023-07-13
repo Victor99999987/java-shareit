@@ -315,6 +315,7 @@ public class ItemServiceImplTest {
 
         itemDto.setRequestId(1L);
         item = ItemMapper.toItem(itemDto);
+        item.setRequest(request);
 
         Mockito
                 .when(userRepository.findById(anyLong()))
