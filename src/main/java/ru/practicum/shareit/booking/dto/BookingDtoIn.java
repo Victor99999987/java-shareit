@@ -1,14 +1,16 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookingDtoIn {
     @NotNull(message = "id вещи бронирования должен быть указан")
     private Long itemId;

@@ -20,7 +20,6 @@ import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.request.exception.RequestValidationException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -129,10 +128,10 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (from < 0) {
-            throw new RequestValidationException("Минимальное значение записи, с которой можно получить данные равно 0");
+            throw new BookingValidationException("Минимальное значение записи, с которой можно получить данные равно 0");
         }
         if (size <= 0) {
-            throw new RequestValidationException("Количество записей на странице должно быть больше 0");
+            throw new BookingValidationException("Количество записей на странице должно быть больше 0");
         }
 
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size, byStartDESC);
@@ -180,10 +179,10 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (from < 0) {
-            throw new RequestValidationException("Минимальное значение записи, с которой можно получить данные равно 0");
+            throw new BookingValidationException("Минимальное значение записи, с которой можно получить данные равно 0");
         }
         if (size <= 0) {
-            throw new RequestValidationException("Количество записей на странице должно быть больше 0");
+            throw new BookingValidationException("Количество записей на странице должно быть больше 0");
         }
 
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size, byStartDESC);
