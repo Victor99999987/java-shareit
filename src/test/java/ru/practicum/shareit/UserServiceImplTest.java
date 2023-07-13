@@ -64,7 +64,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void FindAll() throws Exception {
+    void findAll() throws Exception {
         Mockito
                 .when(userRepository.findAll())
                 .thenReturn(userList);
@@ -75,7 +75,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void FindById_whenUserFound_thenReturnUser() throws Exception {
+    void findById_whenUserFound_thenReturnUser() throws Exception {
         Long id = 1L;
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -88,7 +88,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void FindById_whenUserNotFound_thenException() throws Exception {
+    void findById_whenUserNotFound_thenException() throws Exception {
         Long id = 1L;
         Mockito
                 .when(userRepository.findById(anyLong()))
