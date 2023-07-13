@@ -21,20 +21,19 @@ import ru.practicum.shareit.user.service.impl.UserServiceImpl;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
+    private final ObjectMapper mapper = new ObjectMapper();
     @Mock
     private UserRepository userRepository;
-
     @InjectMocks
     private UserServiceImpl userService;
-
-    private final ObjectMapper mapper = new ObjectMapper();
-
     private MockMvc mvc;
 
     private User user;
@@ -65,7 +64,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void FindAll() throws Exception{
+    void FindAll() throws Exception {
         Mockito
                 .when(userRepository.findAll())
                 .thenReturn(userList);
@@ -76,7 +75,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void FindById_whenUserFound_thenReturnUser() throws Exception{
+    void FindById_whenUserFound_thenReturnUser() throws Exception {
         Long id = 1L;
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -89,7 +88,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void FindById_whenUserNotFound_thenException() throws Exception{
+    void FindById_whenUserNotFound_thenException() throws Exception {
         Long id = 1L;
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -100,7 +99,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void add_whenUserOk_thenReturnUser() throws Exception{
+    void add_whenUserOk_thenReturnUser() throws Exception {
         Mockito
                 .when(userRepository.save(any()))
                 .thenReturn(user);
@@ -113,7 +112,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void remove_whenUserFound_thenDelete() throws Exception{
+    void remove_whenUserFound_thenDelete() throws Exception {
         Long id = 1L;
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -124,7 +123,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void remove_whenUserNotFound_thenException() throws Exception{
+    void remove_whenUserNotFound_thenException() throws Exception {
         Long id = 1L;
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -136,7 +135,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void update_whenUserNotFound_thenException() throws Exception{
+    void update_whenUserNotFound_thenException() throws Exception {
         Long id = 1L;
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -147,7 +146,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void update_whenUserFound_thenReturnUser() throws Exception{
+    void update_whenUserFound_thenReturnUser() throws Exception {
         Long id = 1L;
 
         User updateUser = User.builder()

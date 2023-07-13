@@ -28,12 +28,9 @@ import ru.practicum.shareit.item.service.impl.ItemServiceImpl;
 import ru.practicum.shareit.request.exception.RequestNotFoundException;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.repository.RequestRepository;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.service.impl.UserServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,10 +38,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.validateMockitoUsage;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceImplTest {
+    private final ObjectMapper mapper = new ObjectMapper();
     @Mock
     private ItemRepository itemRepository;
     @Mock
@@ -55,12 +52,8 @@ public class ItemServiceImplTest {
     private CommentRepository commentRepository;
     @Mock
     private RequestRepository requestRepository;
-
     @InjectMocks
     private ItemServiceImpl itemService;
-
-    private final ObjectMapper mapper = new ObjectMapper();
-
     private MockMvc mvc;
 
     private User user;
@@ -139,7 +132,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void findAllByUserId_whenUserNotFount_thenException() throws Exception{
+    void findAllByUserId_whenUserNotFount_thenException() throws Exception {
         Long id = 1L;
         int from = 0;
         int size = 10;
@@ -148,11 +141,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> itemService.findAllByUserId(id,from,size));
+                UserNotFoundException.class, () -> itemService.findAllByUserId(id, from, size));
     }
 
     @Test
-    void findAllByUserId_whenFromLess0_thenException() throws Exception{
+    void findAllByUserId_whenFromLess0_thenException() throws Exception {
         Long id = 1L;
         int from = -1;
         int size = 10;
@@ -161,11 +154,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         ItemValidationException itemValidationException = assertThrows(
-                ItemValidationException.class, () -> itemService.findAllByUserId(id,from,size));
+                ItemValidationException.class, () -> itemService.findAllByUserId(id, from, size));
     }
 
     @Test
-    void findAllByUserId_whenSizeLess0_thenException() throws Exception{
+    void findAllByUserId_whenSizeLess0_thenException() throws Exception {
         Long id = 1L;
         int from = 0;
         int size = -1;
@@ -174,11 +167,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         ItemValidationException itemValidationException = assertThrows(
-                ItemValidationException.class, () -> itemService.findAllByUserId(id,from,size));
+                ItemValidationException.class, () -> itemService.findAllByUserId(id, from, size));
     }
 
     @Test
-    void findAllByUserId_whenUserFound_thenReturnList() throws Exception{
+    void findAllByUserId_whenUserFound_thenReturnList() throws Exception {
         Long id = 1L;
         int from = 0;
         int size = 10;
@@ -187,28 +180,28 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         Mockito
-                .when(itemRepository.findAllByOwner(any(),any()))
+                .when(itemRepository.findAllByOwner(any(), any()))
                 .thenReturn(itemList);
 
         Mockito
-                .when(bookingRepository.findAllByItemInAndStartBeforeAndStatus(any(),any(),any(),any()))
+                .when(bookingRepository.findAllByItemInAndStartBeforeAndStatus(any(), any(), any(), any()))
                 .thenReturn(bookingList);
 
         Mockito
-                .when(bookingRepository.findAllByItemInAndStartAfterAndStatus(any(),any(),any(),any()))
+                .when(bookingRepository.findAllByItemInAndStartAfterAndStatus(any(), any(), any(), any()))
                 .thenReturn(bookingList);
 
         Mockito
-                .when(commentRepository.findAllByItemIn(any(),any()))
+                .when(commentRepository.findAllByItemIn(any(), any()))
                 .thenReturn(commentList);
 
-        List<ItemDto> result = itemService.findAllByUserId(id,from,size);
+        List<ItemDto> result = itemService.findAllByUserId(id, from, size);
 
         assertEquals(itemList.size(), result.size());
     }
 
     @Test
-    void findById_whenUserNotFound_thenException() throws Exception{
+    void findById_whenUserNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         Mockito
@@ -216,11 +209,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> itemService.findById(userId,id));
+                UserNotFoundException.class, () -> itemService.findById(userId, id));
     }
 
     @Test
-    void findById_whenItemNotFound_thenException() throws Exception{
+    void findById_whenItemNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         Mockito
@@ -232,11 +225,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         ItemNotFoundException itemNotFoundException = assertThrows(
-                ItemNotFoundException.class, () -> itemService.findById(userId,id));
+                ItemNotFoundException.class, () -> itemService.findById(userId, id));
     }
 
     @Test
-    void findById_whenItemFound_thenReturn() throws Exception{
+    void findById_whenItemFound_thenReturn() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         Mockito
@@ -248,18 +241,18 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.of(item));
 
         Mockito
-                .when(bookingRepository.findFirstBookingByItemAndStartBeforeAndStatus(any(),any(),any(),any()))
+                .when(bookingRepository.findFirstBookingByItemAndStartBeforeAndStatus(any(), any(), any(), any()))
                 .thenReturn(booking);
 
         Mockito
-                .when(bookingRepository.findFirstBookingByItemAndStartAfterAndStatus(any(),any(),any(),any()))
+                .when(bookingRepository.findFirstBookingByItemAndStartAfterAndStatus(any(), any(), any(), any()))
                 .thenReturn(booking);
 
         Mockito
-                .when(commentRepository.findAllByItem(any(),any()))
+                .when(commentRepository.findAllByItem(any(), any()))
                 .thenReturn(commentList);
 
-        ItemDto result = itemService.findById(userId,id);
+        ItemDto result = itemService.findById(userId, id);
 
         assertEquals(result.getId(), itemDto.getId());
         assertEquals(result.getName(), itemDto.getName());
@@ -267,7 +260,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void add_whenUserNotFound_thenException() throws Exception{
+    void add_whenUserNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         Mockito
@@ -275,11 +268,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> itemService.add(userId,itemDto));
+                UserNotFoundException.class, () -> itemService.add(userId, itemDto));
     }
 
     @Test
-    void add_whenUserFoundAndRequestIsNull_thenReturn() throws Exception{
+    void add_whenUserFoundAndRequestIsNull_thenReturn() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         Mockito
@@ -290,7 +283,7 @@ public class ItemServiceImplTest {
                 .when(itemRepository.save(any()))
                 .thenReturn(item);
 
-        ItemDto result = itemService.add(userId,itemDto);
+        ItemDto result = itemService.add(userId, itemDto);
 
         assertEquals(result.getId(), itemDto.getId());
         assertEquals(result.getName(), itemDto.getName());
@@ -298,7 +291,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void add_whenUserFoundAndRequestNotFound_thenException() throws Exception{
+    void add_whenUserFoundAndRequestNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         itemDto.setRequestId(99999L);
@@ -312,11 +305,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         RequestNotFoundException requestNotFoundException = assertThrows(
-                RequestNotFoundException.class, () -> itemService.add(userId,itemDto));
+                RequestNotFoundException.class, () -> itemService.add(userId, itemDto));
     }
 
     @Test
-    void add_whenUserFoundAndRequestFound_thenReturn() throws Exception{
+    void add_whenUserFoundAndRequestFound_thenReturn() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -335,7 +328,7 @@ public class ItemServiceImplTest {
                 .when(itemRepository.save(any()))
                 .thenReturn(item);
 
-        ItemDto result = itemService.add(userId,itemDto);
+        ItemDto result = itemService.add(userId, itemDto);
 
         assertEquals(result.getId(), itemDto.getId());
         assertEquals(result.getName(), itemDto.getName());
@@ -344,7 +337,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void remove_whenUserNotFound_thenException() throws Exception{
+    void remove_whenUserNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         Mockito
@@ -352,11 +345,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> itemService.remove(userId,id));
+                UserNotFoundException.class, () -> itemService.remove(userId, id));
     }
 
     @Test
-    void remove_whenUserFoundAndItemNotFound_thenException() throws Exception{
+    void remove_whenUserFoundAndItemNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -369,11 +362,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         ItemNotFoundException itemNotFoundException = assertThrows(
-                ItemNotFoundException.class, () -> itemService.remove(userId,id));
+                ItemNotFoundException.class, () -> itemService.remove(userId, id));
     }
 
     @Test
-    void remove_whenUserNotOwner_thenException() throws Exception{
+    void remove_whenUserNotOwner_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -388,11 +381,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.of(item));
 
         ItemNotFoundException itemNotFoundException = assertThrows(
-                ItemNotFoundException.class, () -> itemService.remove(userId,id));
+                ItemNotFoundException.class, () -> itemService.remove(userId, id));
     }
 
     @Test
-    void remove_whenUserIsOwner_thenDelete() throws Exception{
+    void remove_whenUserIsOwner_thenDelete() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -409,7 +402,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void update_whenUserNotFound_thenException() throws Exception{
+    void update_whenUserNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         Mockito
@@ -417,11 +410,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> itemService.update(userId,id,itemDto));
+                UserNotFoundException.class, () -> itemService.update(userId, id, itemDto));
     }
 
     @Test
-    void update_whenUserFoundAndItemNotFound_thenException() throws Exception{
+    void update_whenUserFoundAndItemNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -434,11 +427,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         ItemNotFoundException itemNotFoundException = assertThrows(
-                ItemNotFoundException.class, () -> itemService.update(userId,id,itemDto));
+                ItemNotFoundException.class, () -> itemService.update(userId, id, itemDto));
     }
 
     @Test
-    void update_whenUserFoundAndRequestFound_thenReturn() throws Exception{
+    void update_whenUserFoundAndRequestFound_thenReturn() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -457,7 +450,7 @@ public class ItemServiceImplTest {
                 .when(itemRepository.save(any()))
                 .thenReturn(item);
 
-        ItemDto result = itemService.update(userId,id, itemDto);
+        ItemDto result = itemService.update(userId, id, itemDto);
 
         assertEquals(result.getId(), itemDto.getId());
         assertEquals(result.getName(), itemDto.getName());
@@ -465,7 +458,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void search_whenTextEmpty_thenReturnEmptyList() throws Exception{
+    void search_whenTextEmpty_thenReturnEmptyList() throws Exception {
         String text = "";
         int from = 0;
         int size = 10;
@@ -476,44 +469,44 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void search_whenFromLess0_thenException() throws Exception{
+    void search_whenFromLess0_thenException() throws Exception {
         String text = "text";
         int from = -1;
         int size = 10;
 
         ItemValidationException itemValidationException = assertThrows(
-                ItemValidationException.class, () -> itemService.search(text,from,size));
+                ItemValidationException.class, () -> itemService.search(text, from, size));
 
     }
 
     @Test
-    void search_whenSizeIs0_thenException() throws Exception{
+    void search_whenSizeIs0_thenException() throws Exception {
         String text = "text";
         int from = 0;
         int size = 0;
 
         ItemValidationException itemValidationException = assertThrows(
-                ItemValidationException.class, () -> itemService.search(text,from,size));
+                ItemValidationException.class, () -> itemService.search(text, from, size));
 
     }
 
     @Test
-    void search_whenParamIsOk_thenReturn() throws Exception{
+    void search_whenParamIsOk_thenReturn() throws Exception {
         String text = "text";
         int from = 0;
         int size = 10;
 
         Mockito
-                .when(itemRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailable(anyString(),anyString(),anyBoolean(),any()))
+                .when(itemRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailable(anyString(), anyString(), anyBoolean(), any()))
                 .thenReturn(itemList);
 
-        List<ItemDto> result = itemService.search(text,from,size);
+        List<ItemDto> result = itemService.search(text, from, size);
 
         assertEquals(itemList.size(), result.size());
     }
 
     @Test
-    void addComment_whenUserNotFound_thenException() throws Exception{
+    void addComment_whenUserNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         Mockito
@@ -521,11 +514,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> itemService.addComment(userId,id, CommentMapper.toDto(comment)));
+                UserNotFoundException.class, () -> itemService.addComment(userId, id, CommentMapper.toDto(comment)));
     }
 
     @Test
-    void addComment_whenItemNotFound_thenException() throws Exception{
+    void addComment_whenItemNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -538,11 +531,11 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         ItemNotFoundException itemNotFoundException = assertThrows(
-                ItemNotFoundException.class, () -> itemService.addComment(userId,id, CommentMapper.toDto(comment)));
+                ItemNotFoundException.class, () -> itemService.addComment(userId, id, CommentMapper.toDto(comment)));
     }
 
     @Test
-    void addComment_whenBookingIsRuning_thenException() throws Exception{
+    void addComment_whenBookingIsRuning_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -555,15 +548,15 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.of(item));
 
         Mockito
-                .when(bookingRepository.findFirstBookingByItemAndBookerAndStatusAndEndBefore(any(),any(),any(),any(),any()))
+                .when(bookingRepository.findFirstBookingByItemAndBookerAndStatusAndEndBefore(any(), any(), any(), any(), any()))
                 .thenReturn(Optional.empty());
 
         ItemValidationException itemValidationException = assertThrows(
-                ItemValidationException.class, () -> itemService.addComment(userId,id, CommentMapper.toDto(comment)));
+                ItemValidationException.class, () -> itemService.addComment(userId, id, CommentMapper.toDto(comment)));
     }
 
     @Test
-    void addComment_whenParamIsOk_thenReturn() throws Exception{
+    void addComment_whenParamIsOk_thenReturn() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -576,14 +569,14 @@ public class ItemServiceImplTest {
                 .thenReturn(Optional.of(item));
 
         Mockito
-                .when(bookingRepository.findFirstBookingByItemAndBookerAndStatusAndEndBefore(any(),any(),any(),any(),any()))
+                .when(bookingRepository.findFirstBookingByItemAndBookerAndStatusAndEndBefore(any(), any(), any(), any(), any()))
                 .thenReturn(Optional.of(booking));
 
         Mockito
                 .when(commentRepository.save(any()))
                 .thenReturn(comment);
 
-        CommentDto result = itemService.addComment(userId,id, commentDto);
+        CommentDto result = itemService.addComment(userId, id, commentDto);
 
         assertEquals(result.getText(), commentDto.getText());
     }

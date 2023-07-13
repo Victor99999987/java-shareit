@@ -27,12 +27,8 @@ import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.item.service.impl.ItemServiceImpl;
-import ru.practicum.shareit.request.exception.RequestNotFoundException;
 import ru.practicum.shareit.request.model.Request;
-import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -42,23 +38,21 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class BookingServiceImplTest {
+    private final ObjectMapper mapper = new ObjectMapper();
     @Mock
     private ItemRepository itemRepository;
     @Mock
     private UserRepository userRepository;
     @Mock
     private BookingRepository bookingRepository;
-
     @InjectMocks
     private BookingServiceImpl bookingService;
-
-    private final ObjectMapper mapper = new ObjectMapper();
-
     private MockMvc mvc;
 
     private User user;
@@ -138,7 +132,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void add_whenUserNotFound_thenException() throws Exception{
+    void add_whenUserNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         bookingDtoIn = new BookingDtoIn();
@@ -148,11 +142,11 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> bookingService.add(userId,bookingDtoIn));
+                UserNotFoundException.class, () -> bookingService.add(userId, bookingDtoIn));
     }
 
     @Test
-    void add_whenItemNotFound_thenException() throws Exception{
+    void add_whenItemNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         bookingDtoIn = new BookingDtoIn();
@@ -167,11 +161,11 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.empty());
 
         ItemNotFoundException itemNotFoundException = assertThrows(
-                ItemNotFoundException.class, () -> bookingService.add(userId,bookingDtoIn));
+                ItemNotFoundException.class, () -> bookingService.add(userId, bookingDtoIn));
     }
 
     @Test
-    void add_whenItemNotAvailable_thenException() throws Exception{
+    void add_whenItemNotAvailable_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         bookingDtoIn = new BookingDtoIn();
@@ -187,11 +181,11 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(item));
 
         ItemValidationException itemValidationException = assertThrows(
-                ItemValidationException.class, () -> bookingService.add(userId,bookingDtoIn));
+                ItemValidationException.class, () -> bookingService.add(userId, bookingDtoIn));
     }
 
     @Test
-    void add_whenUserIsOwner_thenException() throws Exception{
+    void add_whenUserIsOwner_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         bookingDtoIn = new BookingDtoIn();
@@ -206,18 +200,18 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(item));
 
         ItemNotFoundException itemNotFoundException = assertThrows(
-                ItemNotFoundException.class, () -> bookingService.add(userId,bookingDtoIn));
+                ItemNotFoundException.class, () -> bookingService.add(userId, bookingDtoIn));
     }
 
     @Test
-    void add_whenStartAfterEnd_thenException() throws Exception{
+    void add_whenStartAfterEnd_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         bookingDtoIn = new BookingDtoIn();
         bookingDtoIn.setItemId(1L);
         bookingDtoIn.setStart(LocalDateTime.now().plusDays(3));
         bookingDtoIn.setEnd(LocalDateTime.now().plusDays(2));
-        item.setOwner(new User(3L, "",""));
+        item.setOwner(new User(3L, "", ""));
 
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -228,18 +222,18 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(item));
 
         ItemValidationException itemValidationException = assertThrows(
-                ItemValidationException.class, () -> bookingService.add(userId,bookingDtoIn));
+                ItemValidationException.class, () -> bookingService.add(userId, bookingDtoIn));
     }
 
     @Test
-    void add_whenStartEqualsEnd_thenException() throws Exception{
+    void add_whenStartEqualsEnd_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         bookingDtoIn = new BookingDtoIn();
         bookingDtoIn.setItemId(1L);
         bookingDtoIn.setStart(LocalDateTime.now().plusDays(3));
         bookingDtoIn.setEnd(LocalDateTime.now().plusDays(3));
-        item.setOwner(new User(3L, "",""));
+        item.setOwner(new User(3L, "", ""));
 
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -250,18 +244,18 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(item));
 
         ItemValidationException itemValidationException = assertThrows(
-                ItemValidationException.class, () -> bookingService.add(userId,bookingDtoIn));
+                ItemValidationException.class, () -> bookingService.add(userId, bookingDtoIn));
     }
 
     @Test
-    void add_whenParamIsOk_thenReturn() throws Exception{
+    void add_whenParamIsOk_thenReturn() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         bookingDtoIn = new BookingDtoIn();
         bookingDtoIn.setItemId(1L);
         bookingDtoIn.setStart(LocalDateTime.now().plusDays(3));
         bookingDtoIn.setEnd(LocalDateTime.now().plusDays(4));
-        item.setOwner(new User(3L, "",""));
+        item.setOwner(new User(3L, "", ""));
 
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -275,13 +269,13 @@ public class BookingServiceImplTest {
                 .when(bookingRepository.save(any()))
                 .thenReturn(booking);
 
-        BookingDtoOut result = bookingService.add(userId,bookingDtoIn);
+        BookingDtoOut result = bookingService.add(userId, bookingDtoIn);
 
         assertEquals(result.getId(), itemDto.getId());
     }
 
     @Test
-    void update_whenUserNotFound_thenException() throws Exception{
+    void update_whenUserNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         boolean approved = true;
@@ -291,11 +285,11 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> bookingService.update(userId,id, approved));
+                UserNotFoundException.class, () -> bookingService.update(userId, id, approved));
     }
 
     @Test
-    void update_whenBookingNotFound_thenException() throws Exception{
+    void update_whenBookingNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         boolean approved = true;
@@ -309,15 +303,15 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.empty());
 
         BookingNotFoundException bookingNotFoundException = assertThrows(
-                BookingNotFoundException.class, () -> bookingService.update(userId,id, approved));
+                BookingNotFoundException.class, () -> bookingService.update(userId, id, approved));
     }
 
     @Test
-    void update_whenUserNotOwner_thenException() throws Exception{
+    void update_whenUserNotOwner_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         boolean approved = true;
-        item.setOwner(new User(3L,"",""));
+        item.setOwner(new User(3L, "", ""));
 
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -328,11 +322,11 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(booking));
 
         BookingNotFoundException bookingNotFoundException = assertThrows(
-                BookingNotFoundException.class, () -> bookingService.update(userId,id, approved));
+                BookingNotFoundException.class, () -> bookingService.update(userId, id, approved));
     }
 
     @Test
-    void update_whenDoubleUpdate_thenException() throws Exception{
+    void update_whenDoubleUpdate_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         boolean approved = true;
@@ -350,16 +344,16 @@ public class BookingServiceImplTest {
                 .when(bookingRepository.save(any()))
                 .thenReturn(booking);
 
-        bookingService.update(userId,id, approved);
+        bookingService.update(userId, id, approved);
 
         BookingValidationException bookingValidationException = assertThrows(
-                BookingValidationException.class, () -> bookingService.update(userId,id, approved));
+                BookingValidationException.class, () -> bookingService.update(userId, id, approved));
 
         Mockito.verify(bookingRepository, times(1)).save(booking);
     }
 
     @Test
-    void update_whenUserIsOwner_thenReturn() throws Exception{
+    void update_whenUserIsOwner_thenReturn() throws Exception {
         Long userId = 1L;
         Long id = 1L;
         boolean approved = true;
@@ -377,14 +371,14 @@ public class BookingServiceImplTest {
                 .when(bookingRepository.save(any()))
                 .thenReturn(booking);
 
-        BookingDtoOut result = bookingService.update(userId,id,approved);
+        BookingDtoOut result = bookingService.update(userId, id, approved);
 
         assertEquals(result.getId(), booking.getId());
         assertNotNull(result.getItem());
     }
 
     @Test
-    void findById_whenUserNotFound_thenException() throws Exception{
+    void findById_whenUserNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -393,11 +387,11 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> bookingService.findById(userId,id));
+                UserNotFoundException.class, () -> bookingService.findById(userId, id));
     }
 
     @Test
-    void findById_whenBookingNotFound_thenException() throws Exception{
+    void findById_whenBookingNotFound_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
 
@@ -410,15 +404,15 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.empty());
 
         BookingNotFoundException bookingNotFoundException = assertThrows(
-                BookingNotFoundException.class, () -> bookingService.findById(userId,id));
+                BookingNotFoundException.class, () -> bookingService.findById(userId, id));
     }
 
     @Test
-    void findById_whenUserIsNotBooker_thenException() throws Exception{
+    void findById_whenUserIsNotBooker_thenException() throws Exception {
         Long userId = 1L;
         Long id = 1L;
-        booking.setBooker(new User(3L,"",""));
-        item.setOwner(new User(5L,"",""));
+        booking.setBooker(new User(3L, "", ""));
+        item.setOwner(new User(5L, "", ""));
 
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -429,14 +423,14 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(booking));
 
         BookingNotFoundException bookingNotFoundException = assertThrows(
-                BookingNotFoundException.class, () -> bookingService.findById(userId,id));
+                BookingNotFoundException.class, () -> bookingService.findById(userId, id));
     }
 
     @Test
-    void findById_whenUserIsBooker_thenReturn() throws Exception{
+    void findById_whenUserIsBooker_thenReturn() throws Exception {
         Long userId = 1L;
         Long id = 1L;
-        item.setOwner(new User(5L,"",""));
+        item.setOwner(new User(5L, "", ""));
 
         Mockito
                 .when(userRepository.findById(anyLong()))
@@ -446,14 +440,14 @@ public class BookingServiceImplTest {
                 .when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booking));
 
-        BookingDtoOut result = bookingService.findById(userId,id);
+        BookingDtoOut result = bookingService.findById(userId, id);
 
         assertEquals(result.getId(), booking.getId());
         assertNotNull(result.getItem());
     }
 
     @Test
-    void findAllByUserId_whenUserNotFound_thenException() throws Exception{
+    void findAllByUserId_whenUserNotFound_thenException() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -464,11 +458,11 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> bookingService.findAllByUserId(userId,stateIn, from,size));
+                UserNotFoundException.class, () -> bookingService.findAllByUserId(userId, stateIn, from, size));
     }
 
     @Test
-    void findAllByUserId_whenUnknownStatus_thenException() throws Exception{
+    void findAllByUserId_whenUnknownStatus_thenException() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -479,11 +473,11 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         BookingValidationException bookingValidationException = assertThrows(
-                BookingValidationException.class, () -> bookingService.findAllByUserId(userId,stateIn,from,size));
+                BookingValidationException.class, () -> bookingService.findAllByUserId(userId, stateIn, from, size));
     }
 
     @Test
-    void findAllByUserId_whenStatusAll_thenReturn() throws Exception{
+    void findAllByUserId_whenStatusAll_thenReturn() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -494,16 +488,16 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         Mockito
-                .when(bookingRepository.findAllByBooker(any(),any()))
+                .when(bookingRepository.findAllByBooker(any(), any()))
                 .thenReturn(bookingList);
 
-        List<BookingDtoOut> result = bookingService.findAllByUserId(userId,stateIn,from,size);
+        List<BookingDtoOut> result = bookingService.findAllByUserId(userId, stateIn, from, size);
 
         assertEquals(result.size(), bookingList.size());
     }
 
     @Test
-    void findAllByOwnerId_whenUserNotFound_thenException() throws Exception{
+    void findAllByOwnerId_whenUserNotFound_thenException() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -514,11 +508,11 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(
-                UserNotFoundException.class, () -> bookingService.findAllByOwnerId(userId,stateIn, from,size));
+                UserNotFoundException.class, () -> bookingService.findAllByOwnerId(userId, stateIn, from, size));
     }
 
     @Test
-    void findAllByOwnerId_whenUnknownStatus_thenException() throws Exception{
+    void findAllByOwnerId_whenUnknownStatus_thenException() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -529,11 +523,11 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         BookingValidationException bookingValidationException = assertThrows(
-                BookingValidationException.class, () -> bookingService.findAllByOwnerId(userId,stateIn,from,size));
+                BookingValidationException.class, () -> bookingService.findAllByOwnerId(userId, stateIn, from, size));
     }
 
     @Test
-    void findAllByOwnerId_whenStatusAll_thenReturn() throws Exception{
+    void findAllByOwnerId_whenStatusAll_thenReturn() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -544,16 +538,16 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         Mockito
-                .when(bookingRepository.findAllByItem_Owner(any(),any()))
+                .when(bookingRepository.findAllByItem_Owner(any(), any()))
                 .thenReturn(bookingList);
 
-        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId,stateIn,from,size);
+        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId, stateIn, from, size);
 
         assertEquals(result.size(), bookingList.size());
     }
 
     @Test
-    void findAllByOwnerId_whenStatusCURRENT_thenReturn() throws Exception{
+    void findAllByOwnerId_whenStatusCURRENT_thenReturn() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -564,16 +558,16 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         Mockito
-                .when(bookingRepository.findAllByItem_OwnerAndStartBeforeAndEndAfter(any(),any(),any(),any()))
+                .when(bookingRepository.findAllByItem_OwnerAndStartBeforeAndEndAfter(any(), any(), any(), any()))
                 .thenReturn(bookingList);
 
-        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId,stateIn,from,size);
+        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId, stateIn, from, size);
 
         assertEquals(result.size(), bookingList.size());
     }
 
     @Test
-    void findAllByOwnerId_whenStatusPAST_thenReturn() throws Exception{
+    void findAllByOwnerId_whenStatusPAST_thenReturn() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -584,16 +578,16 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         Mockito
-                .when(bookingRepository.findAllByItem_OwnerAndEndBefore(any(),any(),any()))
+                .when(bookingRepository.findAllByItem_OwnerAndEndBefore(any(), any(), any()))
                 .thenReturn(bookingList);
 
-        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId,stateIn,from,size);
+        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId, stateIn, from, size);
 
         assertEquals(result.size(), bookingList.size());
     }
 
     @Test
-    void findAllByOwnerId_whenStatusFUTURE_thenReturn() throws Exception{
+    void findAllByOwnerId_whenStatusFUTURE_thenReturn() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -604,16 +598,16 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         Mockito
-                .when(bookingRepository.findAllByItem_OwnerAndStartAfter(any(),any(),any()))
+                .when(bookingRepository.findAllByItem_OwnerAndStartAfter(any(), any(), any()))
                 .thenReturn(bookingList);
 
-        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId,stateIn,from,size);
+        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId, stateIn, from, size);
 
         assertEquals(result.size(), bookingList.size());
     }
 
     @Test
-    void findAllByOwnerId_whenStatusWAITING_thenReturn() throws Exception{
+    void findAllByOwnerId_whenStatusWAITING_thenReturn() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -624,16 +618,16 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         Mockito
-                .when(bookingRepository.findAllByItem_OwnerAndStatus(any(),any(),any()))
+                .when(bookingRepository.findAllByItem_OwnerAndStatus(any(), any(), any()))
                 .thenReturn(bookingList);
 
-        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId,stateIn,from,size);
+        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId, stateIn, from, size);
 
         assertEquals(result.size(), bookingList.size());
     }
 
     @Test
-    void findAllByOwnerId_whenStatusREJECTED_thenReturn() throws Exception{
+    void findAllByOwnerId_whenStatusREJECTED_thenReturn() throws Exception {
         Long userId = 1L;
         int from = 0;
         int size = 10;
@@ -644,10 +638,10 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         Mockito
-                .when(bookingRepository.findAllByItem_OwnerAndStatus(any(),any(),any()))
+                .when(bookingRepository.findAllByItem_OwnerAndStatus(any(), any(), any()))
                 .thenReturn(bookingList);
 
-        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId,stateIn,from,size);
+        List<BookingDtoOut> result = bookingService.findAllByOwnerId(userId, stateIn, from, size);
 
         assertEquals(result.size(), bookingList.size());
     }

@@ -12,20 +12,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.common.ErrorHandler;
-import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.common.ErrorHandler;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -37,14 +34,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 public class BookingControllerTest {
+    private final ObjectMapper mapper = new ObjectMapper();
     @Mock
     private BookingService bookingService;
-
     @InjectMocks
     private BookingController bookingController;
-
-    private final ObjectMapper mapper = new ObjectMapper();
-
     private MockMvc mvc;
 
     private BookingDtoIn bookingDtoIn;
@@ -174,7 +168,7 @@ public class BookingControllerTest {
                 .thenReturn(expectedDtos);
 
         mvc.perform(get("/bookings")
-                .header("X-Sharer-User-Id", "1"))
+                        .header("X-Sharer-User-Id", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(expectedDtos.size()))
@@ -197,7 +191,7 @@ public class BookingControllerTest {
                 .thenReturn(expectedDtos);
 
         mvc.perform(get("/bookings/owner")
-                .header("X-Sharer-User-Id", "2"))
+                        .header("X-Sharer-User-Id", "2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(expectedDtos.size()))
