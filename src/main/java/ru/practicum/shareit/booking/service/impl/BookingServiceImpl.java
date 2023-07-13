@@ -60,10 +60,10 @@ public class BookingServiceImpl implements BookingService {
             throw new ItemNotFoundException("Владелец вещи не может оформлять её бронирование");
         }
         if (bookingDtoIn.getStart().isAfter(bookingDtoIn.getEnd())) {
-            throw new ItemValidationException("Дата начала бронирования позже окончания бронирования");
+            throw new BookingValidationException("Дата начала бронирования позже окончания бронирования");
         }
         if (bookingDtoIn.getStart().equals(bookingDtoIn.getEnd())) {
-            throw new ItemValidationException("Дата начала и окончания бронирования совпадают");
+            throw new BookingValidationException("Дата начала и окончания бронирования совпадают");
         }
         Booking booking = BookingMapper.toBooking(bookingDtoIn);
         booking.setBooker(user);

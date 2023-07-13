@@ -221,8 +221,8 @@ public class BookingServiceImplTest {
                 .when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        ItemValidationException itemValidationException = assertThrows(
-                ItemValidationException.class, () -> bookingService.add(userId, bookingDtoIn));
+        BookingValidationException bookingValidationException = assertThrows(
+                BookingValidationException.class, () -> bookingService.add(userId, bookingDtoIn));
     }
 
     @Test
@@ -231,8 +231,9 @@ public class BookingServiceImplTest {
         Long id = 1L;
         bookingDtoIn = new BookingDtoIn();
         bookingDtoIn.setItemId(1L);
-        bookingDtoIn.setStart(LocalDateTime.now().plusDays(3));
-        bookingDtoIn.setEnd(LocalDateTime.now().plusDays(3));
+        LocalDateTime curTime= LocalDateTime.now();
+        bookingDtoIn.setStart(curTime.plusDays(3));
+        bookingDtoIn.setEnd(curTime.plusDays(3));
         item.setOwner(new User(3L, "", ""));
 
         Mockito
@@ -243,8 +244,8 @@ public class BookingServiceImplTest {
                 .when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
 
-        ItemValidationException itemValidationException = assertThrows(
-                ItemValidationException.class, () -> bookingService.add(userId, bookingDtoIn));
+        BookingValidationException bookingValidationException = assertThrows(
+                BookingValidationException.class, () -> bookingService.add(userId, bookingDtoIn));
     }
 
     @Test
