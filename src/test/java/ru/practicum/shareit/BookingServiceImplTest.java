@@ -231,7 +231,7 @@ public class BookingServiceImplTest {
         Long id = 1L;
         bookingDtoIn = new BookingDtoIn();
         bookingDtoIn.setItemId(1L);
-        LocalDateTime curTime= LocalDateTime.now();
+        LocalDateTime curTime = LocalDateTime.now();
         bookingDtoIn.setStart(curTime.plusDays(3));
         bookingDtoIn.setEnd(curTime.plusDays(3));
         item.setOwner(new User(3L, "", ""));
