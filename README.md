@@ -10,7 +10,7 @@
 - сервер, для обработки и выдачи результатов  
 
 ### Используемый стек
-Java, Maven, Hibernate, PostgreSQL, JUnit, Mockito
+Java, Maven, Hibernate, PostgreSQL, JUnit, Mockito, Postman, Docker
 
 
 
